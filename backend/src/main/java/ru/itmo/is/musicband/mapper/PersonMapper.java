@@ -4,7 +4,7 @@ import org.mapstruct.*;
 import ru.itmo.is.musicband.domain.*;
 import ru.itmo.is.musicband.dto.*;
 
-@Mapper(config = CentralConfig.class, componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface PersonMapper {
     @Mapping(target = "location", ignore = true)
     Person toEntity(PersonDto dto);

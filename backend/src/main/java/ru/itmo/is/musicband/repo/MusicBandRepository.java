@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.itmo.is.musicband.domain.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MusicBandRepository extends JpaRepository<MusicBand, Long>, JpaSpecificationExecutor<MusicBand> {
@@ -13,4 +14,6 @@ public interface MusicBandRepository extends JpaRepository<MusicBand, Long>, Jpa
     List<MusicBand> findByDescriptionStartingWith(String prefix);
 
     List<MusicBand> findByGenre(MusicGenre genre);
+
+    Optional<MusicBand> findByNameAndGenre(String name, MusicGenre genre);
 }

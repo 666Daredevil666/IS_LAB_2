@@ -10,12 +10,14 @@ public interface BandMapper {
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "bestAlbum", ignore = true)
     @Mapping(target = "frontMan", ignore = true)
+    @Mapping(target = "version", ignore = true)
     MusicBand toEntity(CreateBandDto dto);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "bestAlbum", ignore = true)
     @Mapping(target = "frontMan", ignore = true)
+    @Mapping(target = "version", ignore = true)
     void updateEntity(UpdateBandDto dto, @MappingTarget MusicBand entity);
 
     @Mapping(target = "bestAlbumId", source = "bestAlbum.id")

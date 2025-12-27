@@ -61,4 +61,7 @@ public class MusicBand {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "front_man_id", nullable = false)
     private Person frontMan;
+
+    @Version
+    private Long version;
 }

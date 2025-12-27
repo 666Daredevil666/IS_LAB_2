@@ -12,6 +12,26 @@ spring:
       hibernate.format_sql: true
   flyway:
     enabled: true
+    validate-on-migrate: false
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  activemq:
+    broker-url: ${ACTIVEMQ_URL:tcp://localhost:61616}
+    user: ${ACTIVEMQ_USER:admin}
+    password: ${ACTIVEMQ_PASS:admin}
+    in-memory: true
+  jms:
+    listener:
+      acknowledge-mode: auto
+  task:
+    scheduling:
+      pool:
+        size: 2
+external:
+  rest:
+    url: ${EXTERNAL_REST_URL:http://mock-external:80/post}
 server:
   port: 8080
 springdoc:

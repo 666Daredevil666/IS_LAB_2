@@ -321,8 +321,10 @@
         <input id="f-front" placeholder="frontManNameEquals"/>
         <select id="f-genre">
             <option value="">genreEquals</option>
-            <option>PROGRESSIVE_ROCK</option>
-            <option>MATH_ROCK</option>
+            <option>ROCK</option>
+            <option>PSYCHEDELIC_CLOUD_RAP</option>
+            <option>BLUES</option>
+            <option>POP</option>
             <option>POST_PUNK</option>
         </select>
         <button id="btn-apply">Фильтр</button>
@@ -346,6 +348,8 @@
             <option>50</option>
         </select>
         <button id="btn-create">Создать группу</button>
+        <button id="btn-import">Импорт</button>
+        <button id="btn-import-history">История импорта</button>
         <button id="btn-persons">Персоны</button>
         <button id="btn-albums">Альбомы</button>
         <div class="dropdown">
@@ -392,13 +396,15 @@
             <label>Name<input id="b-name" required/></label>
             <label>Genre
                 <select id="b-genre" required>
-                    <option value="PROGRESSIVE_ROCK">PROGRESSIVE_ROCK</option>
-                    <option value="MATH_ROCK">MATH_ROCK</option>
+                    <option value="ROCK">ROCK</option>
+                    <option value="PSYCHEDELIC_CLOUD_RAP">PSYCHEDELIC_CLOUD_RAP</option>
+                    <option value="BLUES">BLUES</option>
+                    <option value="POP">POP</option>
                     <option value="POST_PUNK">POST_PUNK</option>
                 </select>
             </label>
             <label>Coord X<input id="b-x" type="number" step="0.01" required/></label>
-            <label>Coord Y<input id="b-y" type="number" step="0.01" required/></label>
+            <label>Coord Y<input id="b-y" type="number" step="0.01" max="879" required/></label>
             <label>Participants<input id="b-part" type="number" min="1"/></label>
             <label>Singles<input id="b-singles" type="number" min="1" required/></label>
             <label>AlbumsCount<input id="b-albums" type="number" min="1" required/></label>
@@ -468,8 +474,44 @@
     </form>
 </dialog>
 
+<dialog id="import-modal">
+    <form id="import-form" novalidate>
+        <h3>Импорт групп из CSV</h3>
+        <div class="grid two">
+            <label>Имя пользователя<input id="import-user" placeholder="anonymous" value="anonymous"/></label>
+            <label>
+                Файл CSV<input type="file" id="import-file" accept=".csv" required/>
+            </label>
+        </div>
+        <div class="modal-actions">
+            <button type="button" id="import-cancel">Отмена</button>
+            <button type="submit" id="import-submit">Загрузить</button>
+        </div>
+        <pre id="import-result"></pre>
+        <p class="error" id="import-error"></p>
+    </form>
+</dialog>
+
+<dialog id="import-history-modal">
+    <form id="import-history-form" novalidate>
+        <h3>История импорта</h3>
+        <div class="grid two">
+            <label>Имя пользователя<input id="history-user" placeholder="anonymous" value="anonymous"/></label>
+            <label>
+                <input type="checkbox" id="history-all"/> Показать все операции (только для admin)
+            </label>
+        </div>
+        <div class="list" id="import-history-list"></div>
+        <div class="modal-actions">
+            <button type="button" id="import-history-refresh">Обновить</button>
+            <button type="button" id="import-history-close">Закрыть</button>
+        </div>
+        <p class="error" id="import-history-error"></p>
+    </form>
+</dialog>
+
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-<script src="/app.js"></script>
+<script src="/app.js?v=12"></script>
 </body>
 </html>

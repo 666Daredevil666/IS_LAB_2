@@ -39,7 +39,28 @@ const api = {
     deleteByAlbumsCount: (v) =>
         fetchJson(`${API}/bands/ops/deleteByAlbumsCount?value=${encodeURIComponent(v)}`, {method: 'POST'}),
     decrement: (id, by) =>
-        fetchJson(`${API}/bands/${id}/participants/decrement?by=${encodeURIComponent(by)}`, {method: 'POST'})
+        fetchJson(`${API}/bands/${id}/participants/decrement?by=${encodeURIComponent(by)}`, {method: 'POST'}),
+
+    importFile: async (file, userName) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        if (userName && userName.trim()) {
+            formData.append('user', userName.trim());
+        }
+        const r = await fetch(`${API}/import`, {method: 'POST', body: formData});
+        const ct = r.headers.get('content-type') || '';
+        const d = ct.includes('application/json') ? await r.json() : await r.text();
+        if (!r.ok) throw new Error(typeof d === 'string' ? d : (d && d.error) || 'Import error');
+        return d;
+    },
+    importHistory: (userName, all) => {
+        const params = new URLSearchParams();
+        if (userName && userName.trim()) {
+            params.append('user', userName.trim());
+        }
+        params.append('all', all);
+        return fetchJson(`${API}/import/history?${params.toString()}`);
+    }
 };
 
 const state = {
@@ -52,6 +73,7 @@ const state = {
     content: [],
     albums: [],
     persons: [],
+    dataLoaded: false,
     modalOpenSeq: 0,
     saving: {band: false, person: false, album: false},
     ws: {client: null, muteNext: false, skipFirst: true}
@@ -72,11 +94,31 @@ const els = {
     pageSize: document.getElementById('page-size'),
 
     btnCreate: document.getElementById('btn-create'),
+    btnImport: document.getElementById('btn-import'),
+    btnImportHistory: document.getElementById('btn-import-history'),
     btnPersons: document.getElementById('btn-persons'),
     btnAlbums: document.getElementById('btn-albums'),
 
     btnOps: document.getElementById('btn-ops'),
     opsMenu: document.getElementById('ops-menu'),
+
+    importModal: document.getElementById('import-modal'),
+    importForm: document.getElementById('import-form'),
+    importFile: document.getElementById('import-file'),
+    importUser: document.getElementById('import-user'),
+    importResult: document.getElementById('import-result'),
+    importError: document.getElementById('import-error'),
+    importCancel: document.getElementById('import-cancel'),
+    importSubmit: document.getElementById('import-submit'),
+
+    importHistoryModal: document.getElementById('import-history-modal'),
+    importHistoryForm: document.getElementById('import-history-form'),
+    importHistoryList: document.getElementById('import-history-list'),
+    importHistoryUser: document.getElementById('history-user'),
+    importHistoryAll: document.getElementById('history-all'),
+    importHistoryRefresh: document.getElementById('import-history-refresh'),
+    importHistoryError: document.getElementById('import-history-error'),
+    importHistoryClose: document.getElementById('import-history-close'),
 
     tableBody: document.querySelector('#bands tbody'),
 
@@ -176,7 +218,7 @@ function renderTable() {
         const tr = document.createElement('tr');
         tr.innerHTML = `
       <td>${b.id}</td>
-      <td>${b.name}</td>
+      <td>${b.name}</td>    
       <td><span class="badge">${b.genre}</span></td>
       <td>${b.albumsCount}</td>
       <td>${b.singlesCount}</td>
@@ -282,8 +324,12 @@ els.tableBody.addEventListener('click', async (e) => {
     const act = btn.dataset.act;
 
     if (act === 'view') {
-        const b = await api.band(id);
-        openBandModal(b, true);
+        try {
+            const b = await api.band(id);
+            openBandModal(b, false);
+        } catch (err) {
+            alert(prettyError(err));
+        }
         return;
     }
 
@@ -297,8 +343,12 @@ els.tableBody.addEventListener('click', async (e) => {
     }
 
     if (act === 'edit') {
-        const b = await api.band(id);
-        openBandModal(b, true);
+        try {
+            const b = await api.band(id);
+            openBandModal(b, true);
+        } catch (err) {
+            alert(prettyError(err));
+        }
         return;
     }
 
@@ -309,9 +359,9 @@ els.tableBody.addEventListener('click', async (e) => {
             state.ws.muteNext = true;
             await api.decrement(id, by);
             document.querySelectorAll('.dropdown.open').forEach((d) => d.classList.remove('open'));
-            await load();
         } catch (err) {
             alert(prettyError(err));
+            await load();
         } finally {
             btn.disabled = false;
         }
@@ -337,6 +387,8 @@ document.addEventListener('click', (e) => {
 });
 
 els.btnCreate.onclick = () => openBandModal(null, false);
+els.btnImport.onclick = () => openImportModal();
+els.btnImportHistory.onclick = () => openImportHistoryModal();
 els.btnPersons.onclick = () => openPersonsModal();
 els.btnAlbums.onclick = () => openAlbumsModal();
 
@@ -380,6 +432,7 @@ els.bandSave.onclick = async () => {
         els.bandModal.close();
     } catch (e) {
         els.bandError.textContent = prettyError(e);
+        els.bandForm.reportValidity();
     } finally {
         state.saving.band = false;
     }
@@ -389,11 +442,15 @@ function collectBandDto() {
     const id = els.bandForm.dataset.id ? Number(els.bandForm.dataset.id) : null;
     const bestId = els.bBest.value ? Number(els.bBest.value) : null;
     const frontId = els.bFront.value ? Number(els.bFront.value) : null;
+    const y = Number(els.bY.value);
+    if (y > 879) {
+        throw new Error('Координата Y должна быть не больше 879');
+    }
 
     return {
         id: id || undefined,
         name: els.bName.value.trim(),
-        coordinates: {x: Number(els.bX.value), y: Number(els.bY.value)},
+        coordinates: {x: Number(els.bX.value), y: y},
         genre: els.bGenre.value,
         numberOfParticipants: numOrNull(els.bPart.value),
         singlesCount: Number(els.bSingles.value),
@@ -408,19 +465,63 @@ function openBandModal(existing, isEdit) {
     const seq = ++state.modalOpenSeq;
     els.bandError.textContent = '';
 
-    Promise.all([api.albums(), api.persons()]).then(([albums, persons]) => {
-        if (seq !== state.modalOpenSeq) return;
+    if (existing && !isEdit) {
+        els.bandTitle.textContent = 'Просмотр';
+        els.bName.value = existing.name || '';
+        els.bGenre.value = existing.genre || 'ROCK';
+        els.bX.value = existing.coordinates?.x ?? '';
+        els.bY.value = existing.coordinates?.y ?? '';
+        els.bPart.value = existing.numberOfParticipants ?? '';
+        els.bSingles.value = existing.singlesCount ?? '';
+        els.bAlbums.value = existing.albumsCount ?? '';
+        els.bDesc.value = existing.description || '';
+        els.bBest.innerHTML = `<option value="${existing.bestAlbumId ?? ''}">${existing.bestAlbumName || '(нет)'}</option>`;
+        els.bFront.innerHTML = `<option value="${existing.frontManId ?? ''}">${existing.frontManName || ''}</option>`;
+        els.bandForm.dataset.id = existing.id;
+        els.bName.disabled = els.bGenre.disabled = els.bX.disabled = els.bY.disabled =
+            els.bPart.disabled = els.bSingles.disabled = els.bAlbums.disabled =
+                els.bDesc.disabled = els.bBest.disabled = els.bFront.disabled = true;
+        els.bandModal.showModal();
+        return;
+    }
 
-        state.albums = albums;
-        state.persons = persons;
+    const loadData = async () => {
+        if (state.dataLoaded && state.albums && state.albums.length > 0 && state.persons && state.persons.length > 0) {
+            fillSelectOptions(els.bBest, state.albums, 'id', 'name', true);
+            fillSelectOptions(els.bFront, state.persons, 'id', 'name', false);
+            if (seq !== state.modalOpenSeq) return;
+            populateForm();
+            return;
+        }
 
-        fillSelectOptions(els.bBest, albums, 'id', 'name', true);
-        fillSelectOptions(els.bFront, persons, 'id', 'name', false);
+        try {
+            const [albums, persons] = await Promise.all([api.albums(), api.persons()]);
+            if (seq !== state.modalOpenSeq) return;
+
+            state.albums = albums || [];
+            state.persons = persons || [];
+            state.dataLoaded = true;
+
+            fillSelectOptions(els.bBest, state.albums, 'id', 'name', true);
+            fillSelectOptions(els.bFront, state.persons, 'id', 'name', false);
+            populateForm();
+        } catch (err) {
+            if (seq !== state.modalOpenSeq) return;
+            els.bandError.textContent = prettyError(err);
+            els.bandModal.showModal();
+        }
+    };
+
+    const populateForm = () => {
+
+        els.bName.disabled = els.bGenre.disabled = els.bX.disabled = els.bY.disabled =
+            els.bPart.disabled = els.bSingles.disabled = els.bAlbums.disabled =
+                els.bDesc.disabled = els.bBest.disabled = els.bFront.disabled = false;
 
         if (existing) {
-            els.bandTitle.textContent = isEdit ? 'Изменить группу' : 'Просмотр';
+            els.bandTitle.textContent = 'Изменить группу';
             els.bName.value = existing.name || '';
-            els.bGenre.value = existing.genre || 'POST_PUNK';
+            els.bGenre.value = existing.genre || 'ROCK';
             els.bX.value = existing.coordinates?.x ?? '';
             els.bY.value = existing.coordinates?.y ?? '';
             els.bPart.value = existing.numberOfParticipants ?? '';
@@ -433,14 +534,16 @@ function openBandModal(existing, isEdit) {
         } else {
             els.bandTitle.textContent = 'Создать группу';
             els.bandForm.reset();
-            els.bGenre.value = 'POST_PUNK';
+            els.bGenre.value = 'ROCK';
             els.bBest.value = '';
-            els.bFront.value = persons.length ? String(persons[0].id) : '';
+            els.bFront.value = state.persons.length ? String(state.persons[0].id) : '';
             delete els.bandForm.dataset.id;
         }
 
         els.bandModal.showModal();
-    });
+    };
+
+    loadData();
 
     els.bandModal.addEventListener(
         'close',
@@ -579,7 +682,7 @@ function openOpsModal(kind) {
         els.opsTitle.textContent = 'Список по жанру';
         const s = document.createElement('select');
         s.id = 'ops-v';
-        ['PROGRESSIVE_ROCK', 'MATH_ROCK', 'POST_PUNK'].forEach((g) => {
+        ['ROCK', 'PSYCHEDELIC_CLOUD_RAP', 'BLUES', 'POP', 'POST_PUNK'].forEach((g) => {
             const o = document.createElement('option');
             o.textContent = g;
             s.appendChild(o);
@@ -655,6 +758,11 @@ function connectWs() {
                     }
                     load();
                 });
+                client.subscribe('/topic/imports', () => {
+                    if (els.importHistoryModal && els.importHistoryModal.open) {
+                        refreshImportHistory();
+                    }
+                });
             },
             () => {
                 setTimeout(connectWs, 1500);
@@ -664,6 +772,137 @@ function connectWs() {
         setTimeout(connectWs, 1500);
     }
 }
+
+function openImportModal() {
+    els.importForm.reset();
+    els.importUser.value = 'anonymous';
+    els.importResult.textContent = '';
+    els.importError.textContent = '';
+    els.importModal.showModal();
+}
+
+els.importForm.onsubmit = async (e) => {
+    e.preventDefault();
+    if (!els.importFile.files || els.importFile.files.length === 0) {
+        els.importError.textContent = 'Выберите файл';
+        return;
+    }
+    els.importSubmit.disabled = true;
+    els.importError.textContent = '';
+    els.importResult.textContent = 'Загрузка...';
+    try {
+        const userName = els.importUser.value.trim() || 'anonymous';
+        const result = await api.importFile(els.importFile.files[0], userName);
+        els.importResult.textContent = JSON.stringify(result, null, 2);
+        if (result.status === 'SUCCESS') {
+            setTimeout(() => {
+                els.importModal.close();
+                load();
+            }, 1500);
+        }
+    } catch (err) {
+        els.importError.textContent = prettyError(err);
+        els.importResult.textContent = '';
+    } finally {
+        els.importSubmit.disabled = false;
+    }
+};
+
+els.importCancel.onclick = () => els.importModal.close();
+
+function isAdminUser(userName) {
+    if (!userName || !userName.trim()) return false;
+    const name = userName.trim().toLowerCase();
+    return name === 'admin' || name.startsWith('admin_') || name === 'administrator';
+}
+
+async function openImportHistoryModal() {
+    els.importHistoryUser.value = 'anonymous';
+    els.importHistoryAll.checked = false;
+    els.importHistoryError.textContent = '';
+    updateAdminUI('anonymous');
+    await refreshImportHistory();
+    els.importHistoryModal.showModal();
+}
+
+function updateAdminUI(userName) {
+    const isAdmin = isAdminUser(userName);
+    const checkboxLabel = els.importHistoryAll.closest('label');
+    if (checkboxLabel) {
+        checkboxLabel.style.display = isAdmin ? 'block' : 'none';
+    }
+    if (!isAdmin) {
+        els.importHistoryAll.checked = false;
+    }
+}
+
+async function refreshImportHistory() {
+    const userName = els.importHistoryUser.value.trim() || 'anonymous';
+    const all = els.importHistoryAll.checked;
+    updateAdminUI(userName);
+    try {
+        const history = await api.importHistory(userName, all);
+        const c = els.importHistoryList;
+        c.innerHTML = '';
+        if (history.length === 0) {
+            c.innerHTML = '<div class="list-item">История пуста</div>';
+            return;
+        }
+        for (const op of history) {
+            const row = document.createElement('div');
+            row.className = 'list-item';
+            const statusColor = op.status === 'SUCCESS' ? '#4ade80' : op.status === 'FAILED' ? '#f87171' : '#fbbf24';
+            const addedCount = op.status === 'SUCCESS' && op.addedCount != null ? ` (добавлено: ${op.addedCount})` : '';
+            const error = op.errorMessage ? `\nОшибка: ${op.errorMessage}` : '';
+            const isOpAdmin = isAdminUser(op.userName);
+            const adminBadge = isOpAdmin ? '<span style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75em; margin-left: 4px;">ADMIN</span>' : '';
+            row.innerHTML = `
+                <div>
+                    <strong>ID: ${op.id}</strong> | ${op.userName}${adminBadge} | 
+                    <span style="color: ${statusColor}">${op.status}</span>${addedCount}
+                    <br>
+                    <small>Создано: ${op.createdAt ? op.createdAt.replace('T', ' ').substring(0, 19) : ''}</small>
+                    ${error ? `<br><small style="color: #f87171">${error}</small>` : ''}
+                </div>
+            `;
+            c.appendChild(row);
+        }
+        els.importHistoryError.textContent = '';
+    } catch (err) {
+        const errorMsg = err.message || prettyError(err);
+        if (errorMsg.includes('Access denied') || errorMsg.includes('admin')) {
+            els.importHistoryError.textContent = 'Доступ запрещен: требуются права администратора';
+            els.importHistoryAll.checked = false;
+            updateAdminUI(userName);
+        } else {
+            els.importHistoryError.textContent = prettyError(err);
+        }
+    }
+}
+
+els.importHistoryForm.onsubmit = (e) => {
+    e.preventDefault();
+    refreshImportHistory();
+};
+
+els.importHistoryUser.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        refreshImportHistory();
+    }
+});
+
+els.importHistoryUser.addEventListener('input', () => {
+    const userName = els.importHistoryUser.value.trim() || 'anonymous';
+    updateAdminUI(userName);
+});
+
+els.importHistoryAll.addEventListener('change', () => {
+    refreshImportHistory();
+});
+
+els.importHistoryRefresh.onclick = () => refreshImportHistory();
+els.importHistoryClose.onclick = () => els.importHistoryModal.close();
 
 load();
 connectWs();

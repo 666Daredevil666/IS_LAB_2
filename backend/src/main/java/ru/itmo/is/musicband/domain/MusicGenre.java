@@ -1,3 +1,9 @@
 package ru.itmo.is.musicband.domain;
 
-public enum MusicGenre {PROGRESSIVE_ROCK, MATH_ROCK, POST_PUNK}
+public enum MusicGenre {
+    ROCK,
+    PSYCHEDELIC_CLOUD_RAP,
+    BLUES,
+    POP,
+    POST_PUNK
+}

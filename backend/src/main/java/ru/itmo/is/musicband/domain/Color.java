@@ -1,3 +1,7 @@
 package ru.itmo.is.musicband.domain;
 
-public enum Color {GREEN, RED, BLACK, BLUE, YELLOW}
+public enum Color {
+    GREEN,
+    ORANGE,
+    WHITE
+}
