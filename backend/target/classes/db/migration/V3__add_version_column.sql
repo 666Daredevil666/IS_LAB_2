@@ -1,0 +1,3 @@
+ALTER TABLE music_band
+    ADD COLUMN IF NOT EXISTS version BIGINT;
+

@@ -1,0 +1,3 @@
+band.name,band.genre,band.numberOfParticipants,band.singlesCount,band.description,band.albumsCount,coord.x,coord.y,album.name,album.sales,front.name,front.eyeColor,front.hairColor,front.country,front.weight,front.birthday,loc.x,loc.y,loc.name
+InvalidBand,,4,7,,2,10.5,100,AlbumBad,0,FrontBad,GREEN,WHITE,UNITED_KINGDOM,0,,1,2.5,
+

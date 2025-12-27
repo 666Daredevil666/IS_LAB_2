@@ -1,0 +1,4 @@
+band.name,band.genre,band.numberOfParticipants,band.singlesCount,band.description,band.albumsCount,coord.x,coord.y,album.name,album.sales,front.name,front.eyeColor,front.hairColor,front.country,front.weight,front.birthday,loc.x,loc.y,loc.name
+ValidBandImport1,ROCK,4,7,Test band 1,2,10.5,100,AlbumImport1,1000,FrontImport1,GREEN,WHITE,UNITED_KINGDOM,70,1980-01-01,11,2.5,LocImport1
+ValidBandImport2,BLUES,5,8,Test band 2,3,11.0,200,AlbumImport2,2000,FrontImport2,ORANGE,WHITE,FRANCE,75,1985-05-05,12,3.5,LocImport2
+

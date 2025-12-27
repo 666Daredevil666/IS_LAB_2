@@ -1,0 +1,2 @@
+band.name,band.genre,band.numberOfParticipants,band.singlesCount,band.description,band.albumsCount,coord.x,coord.y,album.name,album.sales,front.name,front.eyeColor,front.hairColor,front.country,front.weight,front.birthday,loc.x,loc.y,loc.name
+B_1,BLUES,2,2,Duplicate test,2,10.01,100.1,A_dup_test,5000,F_dup,ORANGE,WHITE,FRANCE,61,1981-02-02,1001,20.6,L_dup

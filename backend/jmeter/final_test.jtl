@@ -1,0 +1,11 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1765161751412,206,Import valid CSV,200,,Importers 3-1,text,true,,215,918,1,4,http://backend:8080/api/import,204,0,53
+1765161751412,293,POST band create (unique),200,,Users-uniqueness 2-1,text,true,,471,387,1,4,http://backend:8080/api/bands,293,0,53
+1765161751805,26,Import invalid CSV (expect rollback),400,,Importers 3-1,text,true,,188,770,1,4,http://backend:8080/api/import,26,0,10
+1765161751755,74,POST admin seed band,409,,Admins-conflict-update-delete 1-2,text,true,,252,391,2,4,http://backend:8080/api/bands,74,0,40
+1765161751412,190,POST admin seed band,200,,Admins-conflict-update-delete 1-1,text,true,,475,391,1,4,http://backend:8080/api/bands,189,0,53
+1765161751412,159,GET bands check duplicates,200,,Readers-verify 4-1,text,true,,493,142,1,4,http://backend:8080/api/bands?page=0&size=100,141,0,53
+1765161753609,96,PUT update same band,500,,Admins-conflict-update-delete 1-1,text,false,,257,393,2,2,http://backend:8080/api/bands/21050,95,0,0
+1765161753609,117,PUT update same band,404,,Admins-conflict-update-delete 1-2,text,true,,361,388,2,2,http://backend:8080/api/bands/,117,0,0
+1765161753754,31,DELETE same band,204,,Admins-conflict-update-delete 1-1,,true,,102,218,2,2,http://backend:8080/api/bands/21050,0,0,4
+1765161753754,17,DELETE same band,404,,Admins-conflict-update-delete 1-2,text,true,,361,213,2,2,http://backend:8080/api/bands/,16,0,0
