@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="LR2 MusicBand" enabled="true">
@@ -44,18 +44,17 @@
           </elementProp>
         </collectionProp>
       </elementProp>
-      <stringProp name="TestPlan.user_define_classpath"/>
+      <stringProp name="TestPlan.user_define_classpath" />
     </TestPlan>
     <hashTree>
-      <!-- Admins: concurrent update/delete on same id -->
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Admins-conflict-update-delete" enabled="true">
         <stringProp name="ThreadGroup.num_threads">2</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <longProp name="ThreadGroup.start_time">0</longProp>
         <longProp name="ThreadGroup.end_time">0</longProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
-        <stringProp name="ThreadGroup.duration"/>
-        <stringProp name="ThreadGroup.delay"/>
+        <stringProp name="ThreadGroup.duration" />
+        <stringProp name="ThreadGroup.delay" />
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="LoopController" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <intProp name="LoopController.loops">1</intProp>
@@ -68,13 +67,13 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <boolProp name="HTTPArgument.use_equals">false</boolProp>
-                <stringProp name="Argument.name"/>
+                <stringProp name="Argument.name" />
                 <stringProp name="Argument.value">{"name":"AdminTestBand","genre":"ROCK","numberOfParticipants":4,"singlesCount":10,"description":"seed","bestAlbumId":${albumId},"albumsCount":2,"frontManId":${frontmanId},"coordinates":{"x":10.1,"y":100.0}}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.contentEncoding"/>
+          <stringProp name="HTTPSampler.contentEncoding" />
           <stringProp name="HTTPSampler.path">${base_url}/api/bands</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -94,27 +93,27 @@
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Extract created bandId" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">bandId</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
             <stringProp name="JSONPostProcessor.match_numbers">0</stringProp>
           </JSONPostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Share bandId between threads" enabled="true">
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="parameters"/>
-            <stringProp name="filename"/>
+            <stringProp name="parameters" />
+            <stringProp name="filename" />
             <stringProp name="script">if (prev.getResponseCode() == '200' &amp;&amp; vars.get('bandId') != null) { props.put('sharedBandId', vars.get('bandId')) }</stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Mark POST 200/409 success" enabled="true">
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="parameters"/>
-            <stringProp name="filename"/>
+            <stringProp name="parameters" />
+            <stringProp name="filename" />
             <stringProp name="script">if (['200','409'].contains(prev.getResponseCode())) { prev.setSuccessful(true); prev.setResponseMessage('') }</stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="PUT update same band" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
@@ -122,15 +121,15 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <boolProp name="HTTPArgument.use_equals">false</boolProp>
-                <stringProp name="Argument.name"/>
+                <stringProp name="Argument.name" />
                 <stringProp name="Argument.value">{"name":"${uniq_name}","genre":"${genre}","numberOfParticipants":5,"singlesCount":10,"description":"upd","bestAlbumId":${albumId},"albumsCount":2,"frontManId":${frontmanId},"coordinates":{"x":10.1,"y":100.0}}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
               </elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.domain"/>
-          <stringProp name="HTTPSampler.protocol"/>
-          <stringProp name="HTTPSampler.contentEncoding"/>
+          <stringProp name="HTTPSampler.domain" />
+          <stringProp name="HTTPSampler.protocol" />
+          <stringProp name="HTTPSampler.contentEncoding" />
           <stringProp name="HTTPSampler.path">${base_url}/api/bands/${bandId}</stringProp>
           <stringProp name="HTTPSampler.method">PUT</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -143,11 +142,11 @@
         <hashTree>
           <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Use shared bandId if available" enabled="true">
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="parameters"/>
-            <stringProp name="filename"/>
+            <stringProp name="parameters" />
+            <stringProp name="filename" />
             <stringProp name="script">def sharedId = props.get('sharedBandId'); if (sharedId != null) { vars.put('bandId', sharedId) }</stringProp>
           </JSR223PreProcessor>
-          <hashTree/>
+          <hashTree />
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers JSON PUT" enabled="true">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Content-Type" elementType="Header">
@@ -160,22 +159,22 @@
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Mark PUT 200/409/404 success" enabled="true">
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="parameters"/>
-            <stringProp name="filename"/>
+            <stringProp name="parameters" />
+            <stringProp name="filename" />
             <stringProp name="script">if (['200','409','404'].contains(prev.getResponseCode())) { prev.setSuccessful(true); prev.setResponseMessage('') }</stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="DELETE same band" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
-          <stringProp name="HTTPSampler.domain"/>
-          <stringProp name="HTTPSampler.protocol"/>
-          <stringProp name="HTTPSampler.contentEncoding"/>
+          <stringProp name="HTTPSampler.domain" />
+          <stringProp name="HTTPSampler.protocol" />
+          <stringProp name="HTTPSampler.contentEncoding" />
           <stringProp name="HTTPSampler.path">${base_url}/api/bands/${bandId}</stringProp>
           <stringProp name="HTTPSampler.method">DELETE</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
@@ -187,14 +186,14 @@
         <hashTree>
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Mark DELETE 204/409/404 success" enabled="true">
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="parameters"/>
-            <stringProp name="filename"/>
+            <stringProp name="parameters" />
+            <stringProp name="filename" />
             <stringProp name="script">if (['204','409','404'].contains(prev.getResponseCode())) { prev.setSuccessful(true); prev.setResponseMessage('') }</stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
         </hashTree>
       </hashTree>
-      <!-- Users: create with duplicate name/genre -->
+
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Users-uniqueness" enabled="true">
         <stringProp name="ThreadGroup.num_threads">2</stringProp>
         <stringProp name="ThreadGroup.ramp_time">0</stringProp>
@@ -210,19 +209,19 @@
               <elementProp name="" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
                 <boolProp name="HTTPArgument.use_equals">false</boolProp>
-                <stringProp name="Argument.name"/>
-                <stringProp name="Argument.value">{"name":"${uniq_name}","genre":"${genre}","numberOfParticipants":3,"singlesCount":5,"description":"dup","bestAlbumId":${albumId},"albumsCount":1,"frontManId":${frontmanId},"coordinates":{"x":11.1,"y":200.0}}</stringProp>
+                <stringProp name="Argument.name" />
+                <stringProp name="Argument.value">{"name":"${band_name}","genre":"${genre}","numberOfParticipants":3,"singlesCount":5,"description":"dup","bestAlbumId":${albumId},"albumsCount":1,"frontManId":${frontmanId},"coordinates":{"x":11.1,"y":200.0}}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
+              <stringProp name="Argument.contentType">application/json</stringProp></elementProp>
             </collectionProp>
           </elementProp>
-          <stringProp name="HTTPSampler.contentEncoding"/>
+          <stringProp name="HTTPSampler.contentEncoding" />
           <stringProp name="HTTPSampler.path">${base_url}/api/bands</stringProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
           <stringProp name="HTTPSampler.postBodyRaw">true</stringProp>
-        </HTTPSamplerProxy>
+        <boolProp name="HTTPSampler.postBodyRaw">true</boolProp></HTTPSamplerProxy>
         <hashTree>
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers JSON POST" enabled="true">
             <collectionProp name="HeaderManager.headers">
@@ -236,7 +235,7 @@
               </elementProp>
             </collectionProp>
           </HeaderManager>
-          <hashTree/>
+          <hashTree />
           <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Expect 200" enabled="true">
             <collectionProp name="Asserion.test_strings">
               <stringProp name="-1221373418">200</stringProp>
@@ -245,12 +244,12 @@
             <boolProp name="Assertion.assume_success">false</boolProp>
             <intProp name="Assertion.test_type">8</intProp>
           </ResponseAssertion>
-          <hashTree/>
+          <hashTree />
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="POST band duplicate (second)" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-              <collectionProp name="Arguments.arguments"/>
+              <collectionProp name="Arguments.arguments"><elementProp name="" elementType="HTTPArgument"><boolProp name="HTTPArgument.always_encode">false</boolProp><stringProp name="Argument.name" /><stringProp name="Argument.value">{"name":"${band_name}","genre":"${genre}","numberOfParticipants":3,"singlesCount":5,"description":"dup","bestAlbumId":${albumId},"albumsCount":1,"frontManId":${frontmanId},"coordinates":{"x":11.1,"y":200.0}}</stringProp><stringProp name="Argument.metadata">=</stringProp><boolProp name="HTTPArgument.use_equals">true</boolProp><stringProp name="Argument.contentType">application/json</stringProp></elementProp></collectionProp>
             </elementProp>
-            <stringProp name="HTTPSampler.contentEncoding"/>
+            <stringProp name="HTTPSampler.contentEncoding" />
             <stringProp name="HTTPSampler.path">${base_url}/api/bands</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -258,7 +257,7 @@
             <stringProp name="HTTPSampler.postBodyRaw">true</stringProp>
             <stringProp name="HTTPSampler.postBody">{"name":"${uniq_name}","genre":"${genre}","numberOfParticipants":3,"singlesCount":5,"description":"dup","bestAlbumId":${albumId},"albumsCount":1,"frontManId":${frontmanId},"coordinates":{"x":11.1,"y":200.0}}</stringProp>
             <boolProp name="HTTPSampler.ignore_status">true</boolProp>
-          </HTTPSamplerProxy>
+          <boolProp name="HTTPSampler.postBodyRaw">true</boolProp></HTTPSamplerProxy>
           <hashTree>
             <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="Headers JSON POST dup" enabled="true">
               <collectionProp name="HeaderManager.headers">
@@ -272,18 +271,17 @@
                 </elementProp>
               </collectionProp>
             </HeaderManager>
-            <hashTree/>
+            <hashTree />
             <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Mark duplicate 409 success" enabled="true">
               <stringProp name="scriptLanguage">groovy</stringProp>
-              <stringProp name="parameters"/>
-              <stringProp name="filename"/>
+              <stringProp name="parameters" />
+              <stringProp name="filename" />
               <stringProp name="script">if (prev.getResponseCode() == '409') { prev.setSuccessful(true); prev.setResponseMessage('') }</stringProp>
             </JSR223PostProcessor>
-            <hashTree/>
+            <hashTree />
           </hashTree>
-        </hashTree>
+        <JSR223PreProcessor guiclass="TestBeanGUI" testclass="JSR223PreProcessor" testname="Init band_name" enabled="true"><stringProp name="scriptLanguage">groovy</stringProp><stringProp name="parameters" /><stringProp name="filename" /><stringProp name="script">vars.put('band_name', 'band-' + java.util.UUID.randomUUID().toString().substring(0, 8))</stringProp></JSR223PreProcessor><hashTree /></hashTree>
       </hashTree>
-      <!-- Import scenarios -->
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Importers" enabled="true">
         <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
@@ -295,7 +293,7 @@
       <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Import valid CSV" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <stringProp name="HTTPSampler.path">${base_url}/api/import</stringProp>
@@ -322,7 +320,7 @@
         </hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Import invalid CSV (expect rollback)" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
           <stringProp name="HTTPSampler.method">POST</stringProp>
           <stringProp name="HTTPSampler.path">${base_url}/api/import</stringProp>
@@ -341,14 +339,13 @@
         <hashTree>
           <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Mark invalid 400 success" enabled="true">
             <stringProp name="scriptLanguage">groovy</stringProp>
-            <stringProp name="parameters"/>
-            <stringProp name="filename"/>
+            <stringProp name="parameters" />
+            <stringProp name="filename" />
             <stringProp name="script">if (prev.getResponseCode() == '400') { prev.setSuccessful(true); prev.setResponseMessage('') }</stringProp>
           </JSR223PostProcessor>
-          <hashTree/>
+          <hashTree />
         </hashTree>
       </hashTree>
-      <!-- Readers: verify no duplicates -->
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Readers-verify" enabled="true">
         <stringProp name="ThreadGroup.num_threads">1</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
@@ -360,7 +357,7 @@
       <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET bands check duplicates" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-            <collectionProp name="Arguments.arguments"/>
+            <collectionProp name="Arguments.arguments" />
           </elementProp>
           <stringProp name="HTTPSampler.path">${base_url}/api/bands?page=0&amp;size=100</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -417,9 +414,9 @@ json.content.each { b -&gt;
             <connectTime>true</connectTime>
           </value>
         </objProp>
-        <stringProp name="filename"/>
+        <stringProp name="filename" />
       </ResultCollector>
-      <hashTree/>
+      <hashTree />
     </hashTree>
   </hashTree>
 </jmeterTestPlan>

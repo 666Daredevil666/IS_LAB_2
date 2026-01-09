@@ -8,8 +8,8 @@ import ru.itmo.is.musicband.dto.PersonDto;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-12-27T15:51:27+0300",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251118-1623, environment: Java 21.0.9 (Eclipse Adoptium)"
+    date = "2026-01-09T11:19:14+0300",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.1 (Oracle Corporation)"
 )
 @Component
 public class PersonMapperImpl implements PersonMapper {
@@ -22,13 +22,13 @@ public class PersonMapperImpl implements PersonMapper {
 
         Person person = new Person();
 
-        person.setBirthday( dto.getBirthday() );
-        person.setEyeColor( dto.getEyeColor() );
-        person.setHairColor( dto.getHairColor() );
         person.setId( dto.getId() );
         person.setName( dto.getName() );
-        person.setNationality( dto.getNationality() );
+        person.setEyeColor( dto.getEyeColor() );
+        person.setHairColor( dto.getHairColor() );
+        person.setBirthday( dto.getBirthday() );
         person.setWeight( dto.getWeight() );
+        person.setNationality( dto.getNationality() );
 
         return person;
     }
@@ -42,13 +42,13 @@ public class PersonMapperImpl implements PersonMapper {
         PersonDto personDto = new PersonDto();
 
         personDto.setLocationId( entityLocationId( entity ) );
-        personDto.setBirthday( entity.getBirthday() );
-        personDto.setEyeColor( entity.getEyeColor() );
-        personDto.setHairColor( entity.getHairColor() );
         personDto.setId( entity.getId() );
         personDto.setName( entity.getName() );
-        personDto.setNationality( entity.getNationality() );
+        personDto.setEyeColor( entity.getEyeColor() );
+        personDto.setHairColor( entity.getHairColor() );
+        personDto.setBirthday( entity.getBirthday() );
         personDto.setWeight( entity.getWeight() );
+        personDto.setNationality( entity.getNationality() );
 
         return personDto;
     }

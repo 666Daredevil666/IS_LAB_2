@@ -1,12 +1,18 @@
 timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
-1765202268499,389,POST band create (unique),200,,Users-uniqueness 2-1,text,true,,456,387,2,6,http://backend:8080/api/bands,389,0,70
-1765202268499,388,POST band create (unique),200,,Users-uniqueness 2-2,text,true,,456,387,2,6,http://backend:8080/api/bands,388,0,70
-1765202268499,397,Import valid CSV,200,,Importers 3-1,text,true,,215,954,1,6,http://backend:8080/api/import,395,0,70
-1765202268900,103,Import invalid CSV (expect rollback),400,,Importers 3-1,text,true,,188,764,1,4,http://backend:8080/api/import,103,0,12
-1765202268499,198,GET bands check duplicates,200,,Readers-verify 4-1,text,true,,3280,142,1,6,http://backend:8080/api/bands?page=0&size=100,171,0,70
-1765202268499,389,POST admin seed band,200,,Admins-conflict-update-delete 1-1,text,true,,460,391,2,6,http://backend:8080/api/bands,389,0,70
-1765202268554,332,POST admin seed band,200,,Admins-conflict-update-delete 1-2,text,true,,460,391,2,6,http://backend:8080/api/bands,332,0,14
-1765202271403,79,PUT update same band,409,,Admins-conflict-update-delete 1-2,text,true,,270,393,2,2,http://backend:8080/api/bands/21066,78,0,0
-1765202271403,79,PUT update same band,409,,Admins-conflict-update-delete 1-1,text,true,,270,393,2,2,http://backend:8080/api/bands/21066,78,0,0
-1765202271574,59,DELETE same band,204,,Admins-conflict-update-delete 1-1,,true,,102,218,2,2,http://backend:8080/api/bands/21066,0,0,0
-1765202271574,122,DELETE same band,204,,Admins-conflict-update-delete 1-2,,true,,102,218,2,2,http://backend:8080/api/bands/21066,0,0,0
+1767948016285,206,Import valid CSV,409,,Importers 3-1,text,false,"Test failed: code expected to equal /
+
+****** received  : [[[409]]]
+
+****** comparison: [[[200]]]
+
+/",223,948,1,6,http://backend:8080/api/import,168,0,76
+1767948017485,41,POST band create (unique),200,,Users-uniqueness 2-1,text,true,,473,389,2,6,http://backend:8080/api/bands,40,0,15
+1767948016628,23,Import invalid CSV (expect rollback),400,,Importers 3-1,text,true,,188,758,1,6,http://backend:8080/api/import,23,0,14
+1767948018076,60,POST band create (unique),200,,Users-uniqueness 2-2,text,true,,473,389,1,4,http://backend:8080/api/bands,57,0,6
+1767948016422,69,POST admin seed band,200,,Admins-conflict-update-delete 1-2,text,true,,475,391,2,6,http://backend:8080/api/bands,39,0,1
+1767948016285,204,POST admin seed band,200,,Admins-conflict-update-delete 1-1,text,true,,475,391,2,6,http://backend:8080/api/bands,175,0,76
+1767948016285,203,GET bands check duplicates,200,,Readers-verify 4-1,text,true,,29109,142,1,6,http://backend:8080/api/bands?page=0&size=100,168,0,76
+1767948018549,108,PUT update same band,200,,Admins-conflict-update-delete 1-2,text,true,,469,393,2,2,http://backend:8080/api/bands/71635,108,0,0
+1767948018549,28,PUT update same band,200,,Admins-conflict-update-delete 1-1,text,true,,469,393,2,2,http://backend:8080/api/bands/71635,27,0,0
+1767948018691,13,DELETE same band,204,,Admins-conflict-update-delete 1-1,,true,,102,218,2,2,http://backend:8080/api/bands/71635,0,0,0
+1767948018691,68,DELETE same band,204,,Admins-conflict-update-delete 1-2,,true,,102,218,1,1,http://backend:8080/api/bands/71635,0,0,0

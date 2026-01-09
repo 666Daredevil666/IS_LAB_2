@@ -7,7 +7,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "import_operation")
 @Getter
 @Setter
 public class ImportOperation {
@@ -15,7 +14,7 @@ public class ImportOperation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_name", nullable = false)
+    @Column(nullable = false)
     private String userName;
 
     @Column(nullable = false)

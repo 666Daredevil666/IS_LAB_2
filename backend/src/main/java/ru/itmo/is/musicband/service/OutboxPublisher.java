@@ -34,7 +34,6 @@ public class OutboxPublisher {
         if (batch.isEmpty()) {
             return;
         }
-        log.info("OutboxPublisher: publishing {} events to JMS", batch.size());
         List<OutboxEvent> toDelete = new ArrayList<>();
         for (OutboxEvent e : batch) {
             try {

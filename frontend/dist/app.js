@@ -41,26 +41,16 @@ const api = {
     decrement: (id, by) =>
         fetchJson(`${API}/bands/${id}/participants/decrement?by=${encodeURIComponent(by)}`, {method: 'POST'}),
 
-    importFile: async (file, userName) => {
+    importFile: async (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        if (userName && userName.trim()) {
-            formData.append('user', userName.trim());
-        }
         const r = await fetch(`${API}/import`, {method: 'POST', body: formData});
         const ct = r.headers.get('content-type') || '';
         const d = ct.includes('application/json') ? await r.json() : await r.text();
         if (!r.ok) throw new Error(typeof d === 'string' ? d : (d && d.error) || 'Import error');
         return d;
     },
-    importHistory: (userName, all) => {
-        const params = new URLSearchParams();
-        if (userName && userName.trim()) {
-            params.append('user', userName.trim());
-        }
-        params.append('all', all);
-        return fetchJson(`${API}/import/history?${params.toString()}`);
-    }
+    importHistory: (all) => fetchJson(`${API}/import/history?all=${all}`)
 };
 
 const state = {
@@ -105,7 +95,6 @@ const els = {
     importModal: document.getElementById('import-modal'),
     importForm: document.getElementById('import-form'),
     importFile: document.getElementById('import-file'),
-    importUser: document.getElementById('import-user'),
     importResult: document.getElementById('import-result'),
     importError: document.getElementById('import-error'),
     importCancel: document.getElementById('import-cancel'),
@@ -114,9 +103,7 @@ const els = {
     importHistoryModal: document.getElementById('import-history-modal'),
     importHistoryForm: document.getElementById('import-history-form'),
     importHistoryList: document.getElementById('import-history-list'),
-    importHistoryUser: document.getElementById('history-user'),
     importHistoryAll: document.getElementById('history-all'),
-    importHistoryRefresh: document.getElementById('import-history-refresh'),
     importHistoryError: document.getElementById('import-history-error'),
     importHistoryClose: document.getElementById('import-history-close'),
 
@@ -775,7 +762,6 @@ function connectWs() {
 
 function openImportModal() {
     els.importForm.reset();
-    els.importUser.value = 'anonymous';
     els.importResult.textContent = '';
     els.importError.textContent = '';
     els.importModal.showModal();
@@ -791,8 +777,7 @@ els.importForm.onsubmit = async (e) => {
     els.importError.textContent = '';
     els.importResult.textContent = 'Загрузка...';
     try {
-        const userName = els.importUser.value.trim() || 'anonymous';
-        const result = await api.importFile(els.importFile.files[0], userName);
+        const result = await api.importFile(els.importFile.files[0]);
         els.importResult.textContent = JSON.stringify(result, null, 2);
         if (result.status === 'SUCCESS') {
             setTimeout(() => {
@@ -810,38 +795,15 @@ els.importForm.onsubmit = async (e) => {
 
 els.importCancel.onclick = () => els.importModal.close();
 
-function isAdminUser(userName) {
-    if (!userName || !userName.trim()) return false;
-    const name = userName.trim().toLowerCase();
-    return name === 'admin' || name.startsWith('admin_') || name === 'administrator';
-}
-
 async function openImportHistoryModal() {
-    els.importHistoryUser.value = 'anonymous';
-    els.importHistoryAll.checked = false;
-    els.importHistoryError.textContent = '';
-    updateAdminUI('anonymous');
     await refreshImportHistory();
     els.importHistoryModal.showModal();
 }
 
-function updateAdminUI(userName) {
-    const isAdmin = isAdminUser(userName);
-    const checkboxLabel = els.importHistoryAll.closest('label');
-    if (checkboxLabel) {
-        checkboxLabel.style.display = isAdmin ? 'block' : 'none';
-    }
-    if (!isAdmin) {
-        els.importHistoryAll.checked = false;
-    }
-}
-
 async function refreshImportHistory() {
-    const userName = els.importHistoryUser.value.trim() || 'anonymous';
     const all = els.importHistoryAll.checked;
-    updateAdminUI(userName);
     try {
-        const history = await api.importHistory(userName, all);
+        const history = await api.importHistory(all);
         const c = els.importHistoryList;
         c.innerHTML = '';
         if (history.length === 0) {
@@ -854,11 +816,9 @@ async function refreshImportHistory() {
             const statusColor = op.status === 'SUCCESS' ? '#4ade80' : op.status === 'FAILED' ? '#f87171' : '#fbbf24';
             const addedCount = op.status === 'SUCCESS' && op.addedCount != null ? ` (добавлено: ${op.addedCount})` : '';
             const error = op.errorMessage ? `\nОшибка: ${op.errorMessage}` : '';
-            const isOpAdmin = isAdminUser(op.userName);
-            const adminBadge = isOpAdmin ? '<span style="background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.75em; margin-left: 4px;">ADMIN</span>' : '';
             row.innerHTML = `
                 <div>
-                    <strong>ID: ${op.id}</strong> | ${op.userName}${adminBadge} | 
+                    <strong>ID: ${op.id}</strong> | ${op.userName} | 
                     <span style="color: ${statusColor}">${op.status}</span>${addedCount}
                     <br>
                     <small>Создано: ${op.createdAt ? op.createdAt.replace('T', ' ').substring(0, 19) : ''}</small>
@@ -867,41 +827,12 @@ async function refreshImportHistory() {
             `;
             c.appendChild(row);
         }
-        els.importHistoryError.textContent = '';
     } catch (err) {
-        const errorMsg = err.message || prettyError(err);
-        if (errorMsg.includes('Access denied') || errorMsg.includes('admin')) {
-            els.importHistoryError.textContent = 'Доступ запрещен: требуются права администратора';
-            els.importHistoryAll.checked = false;
-            updateAdminUI(userName);
-        } else {
-            els.importHistoryError.textContent = prettyError(err);
-        }
+        els.importHistoryError.textContent = prettyError(err);
     }
 }
 
-els.importHistoryForm.onsubmit = (e) => {
-    e.preventDefault();
-    refreshImportHistory();
-};
-
-els.importHistoryUser.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        refreshImportHistory();
-    }
-});
-
-els.importHistoryUser.addEventListener('input', () => {
-    const userName = els.importHistoryUser.value.trim() || 'anonymous';
-    updateAdminUI(userName);
-});
-
-els.importHistoryAll.addEventListener('change', () => {
-    refreshImportHistory();
-});
-
-els.importHistoryRefresh.onclick = () => refreshImportHistory();
+els.importHistoryAll.onchange = () => refreshImportHistory();
 els.importHistoryClose.onclick = () => els.importHistoryModal.close();
 
 load();

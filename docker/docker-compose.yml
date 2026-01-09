@@ -47,11 +47,10 @@ services:
     ports:
       - "61616:61616"
     healthcheck:
-      test: [ "CMD-SHELL", "true" ]
+      test: [ "CMD-SHELL", "nc -z localhost 61616" ]
       interval: 5s
       timeout: 3s
       retries: 20
-
   mock-external:
     image: kennethreitz/httpbin
     expose:
@@ -61,7 +60,6 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
-
   jmeter:
     image: justb4/jmeter:latest
     volumes:

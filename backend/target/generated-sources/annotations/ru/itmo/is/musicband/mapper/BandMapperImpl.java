@@ -13,8 +13,8 @@ import ru.itmo.is.musicband.dto.UpdateBandDto;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-12-27T15:51:27+0300",
-    comments = "version: 1.5.5.Final, compiler: Eclipse JDT (IDE) 3.44.0.v20251118-1623, environment: Java 21.0.9 (Eclipse Adoptium)"
+    date = "2026-01-09T11:19:14+0300",
+    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 23.0.1 (Oracle Corporation)"
 )
 @Component
 public class BandMapperImpl implements BandMapper {
@@ -27,16 +27,16 @@ public class BandMapperImpl implements BandMapper {
 
         MusicBand musicBand = new MusicBand();
 
-        if ( dto.getAlbumsCount() != null ) {
-            musicBand.setAlbumsCount( dto.getAlbumsCount() );
-        }
-        musicBand.setCoordinates( coordinatesDtoToCoordinates( dto.getCoordinates() ) );
-        musicBand.setDescription( dto.getDescription() );
-        musicBand.setGenre( dto.getGenre() );
         musicBand.setName( dto.getName() );
+        musicBand.setCoordinates( coordinatesDtoToCoordinates( dto.getCoordinates() ) );
+        musicBand.setGenre( dto.getGenre() );
         musicBand.setNumberOfParticipants( dto.getNumberOfParticipants() );
         if ( dto.getSinglesCount() != null ) {
             musicBand.setSinglesCount( dto.getSinglesCount() );
+        }
+        musicBand.setDescription( dto.getDescription() );
+        if ( dto.getAlbumsCount() != null ) {
+            musicBand.setAlbumsCount( dto.getAlbumsCount() );
         }
 
         return musicBand;
@@ -48,9 +48,7 @@ public class BandMapperImpl implements BandMapper {
             return;
         }
 
-        if ( dto.getAlbumsCount() != null ) {
-            entity.setAlbumsCount( dto.getAlbumsCount() );
-        }
+        entity.setName( dto.getName() );
         if ( dto.getCoordinates() != null ) {
             if ( entity.getCoordinates() == null ) {
                 entity.setCoordinates( new Coordinates() );
@@ -60,12 +58,14 @@ public class BandMapperImpl implements BandMapper {
         else {
             entity.setCoordinates( null );
         }
-        entity.setDescription( dto.getDescription() );
         entity.setGenre( dto.getGenre() );
-        entity.setName( dto.getName() );
         entity.setNumberOfParticipants( dto.getNumberOfParticipants() );
         if ( dto.getSinglesCount() != null ) {
             entity.setSinglesCount( dto.getSinglesCount() );
+        }
+        entity.setDescription( dto.getDescription() );
+        if ( dto.getAlbumsCount() != null ) {
+            entity.setAlbumsCount( dto.getAlbumsCount() );
         }
     }
 
@@ -81,14 +81,14 @@ public class BandMapperImpl implements BandMapper {
         musicBandDto.setBestAlbumName( entityBestAlbumName( entity ) );
         musicBandDto.setFrontManId( entityFrontManId( entity ) );
         musicBandDto.setFrontManName( entityFrontManName( entity ) );
-        musicBandDto.setAlbumsCount( entity.getAlbumsCount() );
-        musicBandDto.setCoordinates( coordinatesToCoordinatesDto( entity.getCoordinates() ) );
-        musicBandDto.setDescription( entity.getDescription() );
-        musicBandDto.setGenre( entity.getGenre() );
         musicBandDto.setId( entity.getId() );
         musicBandDto.setName( entity.getName() );
+        musicBandDto.setCoordinates( coordinatesToCoordinatesDto( entity.getCoordinates() ) );
+        musicBandDto.setGenre( entity.getGenre() );
         musicBandDto.setNumberOfParticipants( entity.getNumberOfParticipants() );
         musicBandDto.setSinglesCount( entity.getSinglesCount() );
+        musicBandDto.setDescription( entity.getDescription() );
+        musicBandDto.setAlbumsCount( entity.getAlbumsCount() );
 
         musicBandDto.setCreationDate( entity.getCreationDate().toString() );
 

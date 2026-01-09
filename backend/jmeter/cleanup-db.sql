@@ -1,4 +1,4 @@
-TRUNCATE outbox_event, delivery_log, dead_letter_queue RESTART IDENTITY CASCADE;
+TRUNCATE import_operation, outbox_event, delivery_log, dead_letter_queue RESTART IDENTITY CASCADE;
 
 DELETE
 FROM music_band

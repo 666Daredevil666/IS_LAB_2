@@ -133,7 +133,7 @@ $(document).ready(function() {
         widgets: ['zebra']
     });
 
-    var data = {"OkPercent": 100.0, "KoPercent": 0.0};
+    var data = {"OkPercent": 90.9090909090909, "KoPercent": 9.090909090909092};
     var dataset = [
         {
             "label" : "FAIL",
@@ -173,7 +173,7 @@ $(document).ready(function() {
     });
 
     // Creates APDEX table
-    createTable($("#apdexTable"), {"supportsControllersDiscrimination": true, "overall": {"data": [1.0, 500, 1500, "Total"], "isController": false}, "titles": ["Apdex", "T (Toleration threshold)", "F (Frustration threshold)", "Label"], "items": [{"data": [1.0, 500, 1500, "PUT update same band"], "isController": false}, {"data": [1.0, 500, 1500, "DELETE same band"], "isController": false}, {"data": [1.0, 500, 1500, "Import valid CSV"], "isController": false}, {"data": [1.0, 500, 1500, "GET bands check duplicates"], "isController": false}, {"data": [1.0, 500, 1500, "POST admin seed band"], "isController": false}, {"data": [1.0, 500, 1500, "POST band create (unique)"], "isController": false}, {"data": [1.0, 500, 1500, "Import invalid CSV (expect rollback)"], "isController": false}]}, function(index, item){
+    createTable($("#apdexTable"), {"supportsControllersDiscrimination": true, "overall": {"data": [0.9090909090909091, 500, 1500, "Total"], "isController": false}, "titles": ["Apdex", "T (Toleration threshold)", "F (Frustration threshold)", "Label"], "items": [{"data": [1.0, 500, 1500, "PUT update same band"], "isController": false}, {"data": [1.0, 500, 1500, "DELETE same band"], "isController": false}, {"data": [0.0, 500, 1500, "Import valid CSV"], "isController": false}, {"data": [1.0, 500, 1500, "GET bands check duplicates"], "isController": false}, {"data": [1.0, 500, 1500, "POST admin seed band"], "isController": false}, {"data": [1.0, 500, 1500, "POST band create (unique)"], "isController": false}, {"data": [1.0, 500, 1500, "Import invalid CSV (expect rollback)"], "isController": false}]}, function(index, item){
         switch(index){
             case 0:
                 item = item.toFixed(3);
@@ -187,7 +187,7 @@ $(document).ready(function() {
     }, [[0, 0]], 3);
 
     // Create statistics table
-    createTable($("#statisticsTable"), {"supportsControllersDiscrimination": true, "overall": {"data": ["Total", 11, 0, 0.0, 230.45454545454544, 59, 397, 198.0, 395.4, 397.0, 397.0, 3.440725680325305, 1.9118876094776351, 1.416733461057241], "isController": false}, "titles": ["Label", "#Samples", "FAIL", "Error %", "Average", "Min", "Max", "Median", "90th pct", "95th pct", "99th pct", "Transactions/s", "Received", "Sent"], "items": [{"data": ["PUT update same band", 2, 0, 0.0, 79.0, 79, 79, 79.0, 79.0, 79.0, 79.0, 25.31645569620253, 6.675237341772152, 9.716178797468354], "isController": false}, {"data": ["DELETE same band", 2, 0, 0.0, 90.5, 59, 122, 90.5, 122.0, 122.0, 122.0, 16.393442622950822, 1.6329405737704918, 3.4900102459016393], "isController": false}, {"data": ["Import valid CSV", 1, 0, 0.0, 397.0, 397, 397, 397.0, 397.0, 397.0, 397.0, 2.5188916876574305, 0.5288688602015114, 2.3467018261964734], "isController": false}, {"data": ["GET bands check duplicates", 1, 0, 0.0, 198.0, 198, 198, 198.0, 198.0, 198.0, 198.0, 5.050505050505051, 16.17739898989899, 0.700363005050505], "isController": false}, {"data": ["POST admin seed band", 2, 0, 0.0, 360.5, 332, 389, 360.5, 389.0, 389.0, 389.0, 5.141388174807197, 2.3096079691516707, 1.9631667737789202], "isController": false}, {"data": ["POST band create (unique)", 2, 0, 0.0, 388.5, 388, 389, 388.5, 389.0, 389.0, 389.0, 5.141388174807197, 2.28952442159383, 1.9430832262210795], "isController": false}, {"data": ["Import invalid CSV (expect rollback)", 1, 0, 0.0, 103.0, 103, 103, 103.0, 103.0, 103.0, 103.0, 9.70873786407767, 1.7824635922330099, 7.243628640776699], "isController": false}]}, function(index, item){
+    createTable($("#statisticsTable"), {"supportsControllersDiscrimination": true, "overall": {"data": ["Total", 11, 1, 9.090909090909092, 93.0, 13, 206, 68.0, 205.6, 206.0, 206.0, 4.44624090541633, 12.851625656831041, 1.8276007983023443], "isController": false}, "titles": ["Label", "#Samples", "FAIL", "Error %", "Average", "Min", "Max", "Median", "90th pct", "95th pct", "99th pct", "Transactions/s", "Received", "Sent"], "items": [{"data": ["PUT update same band", 2, 0, 0.0, 68.0, 28, 108, 68.0, 108.0, 108.0, 108.0, 18.51851851851852, 8.481626157407408, 7.107204861111112], "isController": false}, {"data": ["DELETE same band", 2, 0, 0.0, 40.5, 13, 68, 40.5, 68.0, 68.0, 68.0, 29.41176470588235, 2.9296875, 6.261488970588235], "isController": false}, {"data": ["Import valid CSV", 1, 1, 100.0, 206.0, 206, 206, 206.0, 206.0, 206.0, 206.0, 4.854368932038835, 1.057152609223301, 4.494083737864078], "isController": false}, {"data": ["GET bands check duplicates", 1, 0, 0.0, 203.0, 203, 203, 203.0, 203.0, 203.0, 203.0, 4.926108374384237, 140.03328971674875, 0.683112684729064], "isController": false}, {"data": ["POST admin seed band", 2, 0, 0.0, 136.5, 69, 204, 136.5, 204.0, 204.0, 204.0, 9.70873786407767, 4.503564927184466, 3.7071450242718447], "isController": false}, {"data": ["POST band create (unique)", 2, 0, 0.0, 50.5, 41, 60, 50.5, 60.0, 60.0, 60.0, 3.0721966205837172, 1.419090821812596, 1.167074692780338], "isController": false}, {"data": ["Import invalid CSV (expect rollback)", 1, 0, 0.0, 23.0, 23, 23, 23.0, 23.0, 23.0, 23.0, 43.47826086956522, 7.982336956521739, 32.18410326086956], "isController": false}]}, function(index, item){
         switch(index){
             // Errors pct
             case 3:
@@ -217,7 +217,7 @@ $(document).ready(function() {
     }, [[0, 0]], 0, summaryTableHeader);
 
     // Create error table
-    createTable($("#errorsTable"), {"supportsControllersDiscrimination": false, "titles": ["Type of error", "Number of errors", "% in errors", "% in all samples"], "items": []}, function(index, item){
+    createTable($("#errorsTable"), {"supportsControllersDiscrimination": false, "titles": ["Type of error", "Number of errors", "% in errors", "% in all samples"], "items": [{"data": ["409", 1, 100.0, 9.090909090909092], "isController": false}]}, function(index, item){
         switch(index){
             case 2:
             case 3:
@@ -228,7 +228,7 @@ $(document).ready(function() {
     }, [[1, 1]]);
 
         // Create top5 errors by sampler
-    createTable($("#top5ErrorsBySamplerTable"), {"supportsControllersDiscrimination": false, "overall": {"data": ["Total", 11, 0, "", "", "", "", "", "", "", "", "", ""], "isController": false}, "titles": ["Sample", "#Samples", "#Errors", "Error", "#Errors", "Error", "#Errors", "Error", "#Errors", "Error", "#Errors", "Error", "#Errors"], "items": [{"data": [], "isController": false}, {"data": [], "isController": false}, {"data": [], "isController": false}, {"data": [], "isController": false}, {"data": [], "isController": false}, {"data": [], "isController": false}, {"data": [], "isController": false}]}, function(index, item){
+    createTable($("#top5ErrorsBySamplerTable"), {"supportsControllersDiscrimination": false, "overall": {"data": ["Total", 11, 1, "409", 1, "", "", "", "", "", "", "", ""], "isController": false}, "titles": ["Sample", "#Samples", "#Errors", "Error", "#Errors", "Error", "#Errors", "Error", "#Errors", "Error", "#Errors", "Error", "#Errors"], "items": [{"data": [], "isController": false}, {"data": [], "isController": false}, {"data": ["Import valid CSV", 1, 1, "409", 1, "", "", "", "", "", "", "", ""], "isController": false}, {"data": [], "isController": false}, {"data": [], "isController": false}, {"data": [], "isController": false}, {"data": [], "isController": false}]}, function(index, item){
         return item;
     }, [[0, 0]], 0);
 
